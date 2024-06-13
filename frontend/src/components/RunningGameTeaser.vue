@@ -5,10 +5,13 @@
     elevation="10"
     @click="emit('goToGame', game)"
   >
-    <div class="game-teaser-image-holder">
+    <div
+      class="game-teaser-image-holder"
+      :style="styleContainer"
+    >
       <div
         class="game-teaser-image state-normal"
-        :style="style"
+        :style="styleIdle"
       />
       <div
         v-if="styleHovered"
@@ -87,17 +90,36 @@ const emit = defineEmits<{
   (e: 'showImageInfo', val: ImageInfo): void
 }>()
 
-const style = computed(() => {
+const MIN_HEIGHT = 300
+
+const styleContainer = computed(() => {
+  return {
+    paddingTop: (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%',
+    }
+})
+
+const styleIdle = computed(() => {
   const url = props.game.imageSnapshots.current
     ? props.game.imageSnapshots.current.url
     : props.game.image.url
-  return { 'background-image': `url("${resizeUrl(url, 620, 496, 'contain')}")` }
+  return { 
+    paddingTop: (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%',
+    backgroundImage: `url("${resizeUrl(url, 620, 496, 'contain')}")`,
+    backgroundSize: 'cover',
+    backgroundPosition: '50% 50%',
+  }
 })
 const styleHovered = computed(() => {
   // when there is a snapshot, we show the full image on hover! this is
   // not a mistake here
   const url = props.game.imageSnapshots.current ? props.game.image.url : null
-  return url ? { 'background-image': `url("${resizeUrl(url, 620, 496, 'contain')}")` } : null
+  return url ? { 
+    paddingTop: (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%',
+    
+    backgroundImage: `url("${resizeUrl(url, 620, 496, 'contain')}")`,
+    backgroundSize: 'cover',
+    backgroundPosition: '50% 50%',
+  } : null
 })
 
 const joinPuzzleText = computed(() => props.game.finished ? 'View puzzle' : 'Join puzzle')

@@ -21,29 +21,38 @@
     </v-row>
 
     <div
-      class="running-games-and-leaderboard"
-      :class="`games-count-${data.gamesRunning.items.length}`"
+      v-if="data.gamesRunning.items.length"
+      class="running-games-container"
     >
-      <div
-        v-if="data.gamesRunning.items.length"
-        class="running-games-container"
+      <MasonryWall
+        :items="data.gamesRunning.items"
+        :column-width="420"
+        :gap="10"
       >
-        <h1>Running games</h1>
-        <v-container
-          :fluid="true"
-          class="pl-0 pr-0 game-teasers-holder running-games"
-        >
+        <template #default="{ item, index }">
           <RunningGameTeaser
-            v-for="(g, idx) in data.gamesRunning.items"
-            :key="idx"
-            :game="g"
+            :key="index"
+            :game="item"
             @go-to-game="goToGame"
             @show-image-info="showImageInfo"
           />
-        </v-container>
-      </div>
+        </template>
+      </MasonryWall>
+      <!-- <v-container
+        :fluid="true"
+        class="pl-0 pr-0 game-teasers-holder running-games"
+      >
+        <RunningGameTeaser
+          v-for="(g, idx) in data.gamesRunning.items"
+          :key="idx"
+          :game="g"
+          @go-to-game="goToGame"
+          @show-image-info="showImageInfo"
+        />
+      </v-container> -->
+    </div>
 
-      <div class="leaderboard-container">
+    <!-- <div class="leaderboard-container">
         <h1>Leaderboard</h1>
         <v-tabs v-model="leaderboardTab">
           <v-tab value="week">
@@ -96,9 +105,8 @@
           >
             Login
           </v-btn> to show up on the leaderboard!
-        </div>
-      </div>
-    </div>
+        </div> 
+      </div>-->
 
     <h1
       v-if="data.livestreams.length > 0"
@@ -185,6 +193,7 @@ import api from '../_api'
 import Leaderboard from '../components/Leaderboard.vue'
 import user, { User } from '../user'
 import ImageInfoDialog from '../components/ImageInfoDialog.vue'
+import MasonryWall from '../components/MasonryWall.vue'
 
 const router = useRouter()
 const data = ref<ApiDataIndexData | null>(null)
