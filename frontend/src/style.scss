@@ -26,6 +26,8 @@ $bg-color-transparent: rgba(0 0 0 / 70%);
   vertical-align: text-bottom;
 
   &.icon-puzzle-piece { background-image: url("assets/icons/puzzle_piece.png"); }
+  &.icon-special-piece { background-image: url("assets/icons/special_piece.png"); }
+  &.icon-puzzle-game { background-image: url("assets/icons/puzzle_game.png"); }
   &.icon-sillouette { background-image: url("assets/icons/sillouette2.png"); }
   &.icon-clock { background-image: url("assets/icons/clock.png"); }
   &.icon-flag { background-image: url("assets/icons/flag.png"); }

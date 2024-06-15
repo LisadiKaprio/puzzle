@@ -32,6 +32,8 @@
         <template #default="{ item, index }">
           <RunningGameTeaser
             :key="index"
+            :assets="assets"
+            :graphics="graphics"
             :game="item"
             @go-to-game="goToGame"
             @show-image-info="showImageInfo"
@@ -194,10 +196,15 @@ import Leaderboard from '../components/Leaderboard.vue'
 import user, { User } from '../user'
 import ImageInfoDialog from '../components/ImageInfoDialog.vue'
 import MasonryWall from '../components/MasonryWall.vue'
+import { Assets } from '../Assets'
+import { Graphics } from '../Graphics'
 
 const router = useRouter()
 const data = ref<ApiDataIndexData | null>(null)
-const me = ref<User|null>(null)
+const me = ref<User | null>(null)
+
+const assets = new Assets()
+const graphics = new Graphics()
 
 const onInit = async () => {
   me.value = user.getMe()
@@ -250,6 +257,7 @@ const onTagClick = (tag: Tag): void => {
 }
 
 onMounted(async () => {
+  await assets.init(graphics)
   onInit()
   user.eventBus.on('login', onInit)
   user.eventBus.on('logout', onInit)

@@ -6,7 +6,7 @@ import GameLog from '../../GameLog'
 import multer from 'multer'
 import request from 'request'
 import Time from '../../../../common/src/Time'
-import Util, { logger, uniqId } from '../../../../common/src/Util'
+import Util, { logger, playerToBasicPlayerInfo, uniqId } from '../../../../common/src/Util'
 import { COOKIE_TOKEN, generateSalt, generateToken, passwordHash } from '../../Auth'
 import { ServerInterface } from '../../Server'
 import { UserRow } from '../../repo/UsersRepo'
@@ -530,9 +530,8 @@ export default function createRouter(
       finished,
       piecesFinished: GameCommon.Game_getFinishedPiecesCount(game),
       piecesTotal: GameCommon.Game_getPieceCount(game),
-      players: finished
-        ? GameCommon.Game_getPlayersWithScore(game).length
-        : GameCommon.Game_getActivePlayers(game, ts).length,
+      playersWithScore: GameCommon.Game_getPlayersWithScore(game).map(playerToBasicPlayerInfo),
+      activePlayers: GameCommon.Game_getActivePlayers(game, ts).map(playerToBasicPlayerInfo),
       image: GameCommon.Game_getImage(game),
       imageSnapshots: gameRow.image_snapshot_url
         ? { current: { url: gameRow.image_snapshot_url } }

@@ -472,7 +472,8 @@ export interface GameInfo {
   finished: number
   piecesFinished: number
   piecesTotal: number
-  players: number
+  playersWithScore: BasicPlayerInfo[]
+  activePlayers: BasicPlayerInfo[]
   image: ImageInfo
   imageSnapshots: ImageSnapshots
   snapMode: SnapMode
