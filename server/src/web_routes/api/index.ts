@@ -159,10 +159,12 @@ export default function createRouter(
         provider_id,
       })
 
-      let user = null
-      if (req.user) {
-        user = req.user
-      } else if (identity) {
+      // in the auth/twitch request, no client_id header is sent, so we also
+      // cannot use req.user
+      // instead, the client_id is passed via req.query.state (but it can be empty)
+      const client_id = req.query.state || ''
+      let user = await server.getUsers().getUser({ client_id })
+      if (!user && identity) {
         user = await server.getUsers().getUserByIdentity(identity)
       }
 
@@ -170,7 +172,7 @@ export default function createRouter(
         user = await server.getUsers().createUser({
           name: userData.data[0].display_name,
           created: new Date(),
-          client_id: await determineNewUserClientId(req.query.state || ''),
+          client_id: await determineNewUserClientId(client_id),
           email: provider_email,
         })
       } else {
@@ -319,7 +321,7 @@ export default function createRouter(
   router.post('/register', express.json(), async (req: any, res): Promise<void> => {
     const salt = generateSalt()
 
-    const client_id = await determineNewUserClientId(req.user ? req.user.client_id: '')
+    const client_id = await determineNewUserClientId(req.user ? req.user.client_id : '')
 
     const emailRaw = `${req.body.email}`
     const passwordRaw = `${req.body.password}`
@@ -628,7 +630,7 @@ export default function createRouter(
     await server.getImages().updateImage({
       title: data.title,
       copyright_name: data.copyrightName,
-      copyright_url: data.copyrightURL,
+      copyright_url: server.getUrlUtil().fixUrl(data.copyrightURL || ''),
     }, { id: data.id })
 
     await server.getImages().setTags(data.id, data.tags || [])
@@ -670,7 +672,7 @@ export default function createRouter(
         filename_original: req.file.originalname,
         title: req.body.title || '',
         copyright_name: req.body.copyrightName || '',
-        copyright_url: req.body.copyrightURL || '',
+        copyright_url: server.getUrlUtil().fixUrl(req.body.copyrightURL || ''),
         created: new Date(),
         width: dim.w,
         height: dim.h,
