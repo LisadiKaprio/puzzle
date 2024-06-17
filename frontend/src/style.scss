@@ -1,4 +1,5 @@
 @import "@mdi/font";
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 html,
 body {
@@ -11,6 +12,12 @@ $link-color: #808db0;
 $link-color-hover: #c5cfeb;
 $bg-color-transparent: rgba(0 0 0 / 70%);
 
+.pixel-font {
+  font-family: "VT323", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .blurred {
   filter: blur(4px);
 }
@@ -19,15 +26,23 @@ $bg-color-transparent: rgba(0 0 0 / 70%);
   height: 100%;
 }
 
+.icon-big {
+  width: 36px;
+  height: 36px;
+  display: inline-block;
+  vertical-align: text-bottom;
+}
+
 .icon {
   width: 16px;
   height: 16px;
   display: inline-block;
   vertical-align: text-bottom;
+  background-size: cover; 
 
+  &.icon-puzzle-game { background-image: url("assets/icons/puzzle_game_36.png");}
   &.icon-puzzle-piece { background-image: url("assets/icons/puzzle_piece.png"); }
   &.icon-special-piece { background-image: url("assets/icons/special_piece.png"); }
-  &.icon-puzzle-game { background-image: url("assets/icons/puzzle_game.png"); }
   &.icon-sillouette { background-image: url("assets/icons/sillouette2.png"); }
   &.icon-clock { background-image: url("assets/icons/clock.png"); }
   &.icon-flag { background-image: url("assets/icons/flag.png"); }
@@ -158,6 +173,32 @@ $bg-color-transparent: rgba(0 0 0 / 70%);
   }
 }
 
+.main-action-button {
+  background-color: rgba(0 83 159 / 70%);
+  border: solid 1px black;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px 0 rgba(0 83 159 / 70%);
+  border-radius: 0px;
+  font-size: 40px ;
+  height: 56px;
+  letter-spacing: normal;
+  padding: 8px 24px;
+  text-transform: uppercase;
+  transition: all 0.1s ease-in;
+    .icon {
+      height: 36px;
+      width: 36px;
+      margin-right: 10px;
+    }
+  &:hover {
+    color: white !important;
+    background-color: rgba(0 83 159 / 90%);
+    box-shadow: 0 0 10px 0 rgba(0 83 159 / 90%);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+}
+
 .v-card-actions {
   .v-btn {
     font-weight: bold;
@@ -170,6 +211,10 @@ $bg-color-transparent: rgba(0 0 0 / 70%);
   height: 100%;
   max-width: 100%;
   overflow: hidden;
+  border-radius: 0px;
+  background: $bg-color-transparent;
+  border: solid 1px black;
+  box-shadow: 0 0 10px 0 rgba(0 0 0 / 70%);
 
   .game-teaser-image-holder {
     display: block;
@@ -191,15 +236,19 @@ $bg-color-transparent: rgba(0 0 0 / 70%);
     -ms-transition: transform 0.2s ease-in, opacity 0.2s ease-in;
     -o-transition: transform 0.2s ease-in, opacity 0.2s ease-in;
     -webkit-transition: transform 0.2s ease-in, opacity 0.2s ease-in;
-    border-radius: 4px;
+    border-radius: 0px;
   }
 
   .game-teaser-inner {
-    border-radius: 4px;
-    background: rgba(0 0 0 / 60%);
-    padding: 1em;
-    font-size: 15px;
+    padding: 12px 24px ;
+    font-size: 14px;
     text-shadow: 1px 1px 3px #000;
+
+    .bottom {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
 
     .game-teaser-buttons {
       padding: 1em;
@@ -297,7 +346,7 @@ $bg-color-transparent: rgba(0 0 0 / 70%);
 .featured-artist-view,
 .index-view,
 .new-game-view {
-  background: url("assets/gfx/gokhan-polat-qyC7DTbWJJk-unsplash.jpg");
+  background: url("assets/textures/wood-dark.jpg");
   height: 100%;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -768,6 +817,20 @@ fieldset {
 .imageteaser-info {
   a {
     color: white;
+  }
+}
+
+.leaderboard-container {
+  background: $bg-color-transparent;
+  padding: 5px;
+  border: solid 1px black;
+  box-shadow: 0 0 10px 0 rgba(0 0 0 / 70%);
+  display: flex;
+  flex-direction: row;
+
+  .leaderboard-row{
+    display: flex;
+    flex-direction: row;
   }
 }
 

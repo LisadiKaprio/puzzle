@@ -3,22 +3,24 @@
     class="running-game-teaser"
     :class="{ 'game-is-private': game.isPrivate }"
     elevation="10"
-    :href="`/g/${game.id}`"
   >
-    <div
-      class="game-teaser-image-holder"
-      :style="styleContainer"
-    >
+    <a :href="`/g/${game.id}`">
       <div
-        class="game-teaser-image state-normal"
-        :style="styleIdle"
-      />
-      <div
-        v-if="styleHovered"
-        class="game-teaser-image state-hovered"
-        :style="styleHovered"
-      />
-    </div>
+        class="game-teaser-image-holder"
+        :style="styleContainer"
+        :href="`/g/${game.id}`"
+      >
+        <div
+          class="game-teaser-image state-normal"
+          :style="styleIdle"
+        />
+        <div
+          v-if="styleHovered"
+          class="game-teaser-image state-hovered"
+          :style="styleHovered"
+        />
+      </div>
+    </a>
 
     <div class="game-teaser-inner">
       <div
@@ -28,7 +30,8 @@
         <v-icon icon="mdi-incognito" /> Private Game
       </div>
       <div class="game-teaser-info">
-        <icon icon="puzzle-piece" /> {{ game.piecesFinished }} / {{ game.piecesTotal }} pieces ({{ Math.round((game.piecesFinished / game.piecesTotal) * 100) }}%)
+        <icon icon="puzzle-piece" />
+        {{ game.piecesFinished }} / {{ game.piecesTotal }} pieces ({{ Math.round((game.piecesFinished / game.piecesTotal) * 100) }}%)
       </div>
       <div
         v-if="scoreMode"
@@ -56,26 +59,26 @@
         <span
           v-for="(player, idx) in players"
           :key="idx"
+          class="mr-1"
+          :style="usernameStyle(player.color)"
         >
           <icon
             :style="iconStyle(player)"
             :title="iconTitle(player)"
           />
-          {{ player.name }}
+          {{ player.name }} ({{ player.points }} points)
         </span>
       </div>
-      <div class="game-teaser-info secondary">
-        <v-icon icon="mdi-timer-outline" /> {{ time }}
-      </div>
-
-      <div class="game-teaser-buttons">
-        <v-btn
-          block
-          prepend-icon="mdi-image"
+      <v-divider class="my-2" />
+      <div class="game-teaser-info bottom">
+        Started {{ time }} ago
+        <div 
+          class="opener"
           @click.stop="emit('showImageInfo', game.image)"
         >
+          <icon icon="info" />
           Image info
-        </v-btn>
+        </div>
       </div>
     </div>
   </v-card>
@@ -86,9 +89,10 @@ import Time from '../../../common/src/Time'
 import { resizeUrl } from '../../../common/src/ImageService'
 import { BasicPlayerInfo, GameInfo, ImageInfo, ScoreMode, ShapeMode, SnapMode } from '../../../common/src/Types'
 import { scoreModeToString, shapeModeToString, snapModeDescriptionToString } from '../../../common/src/Util'
-import { getAnonBadge, getColoredBadge } from '../util'
+import { getAnonBadge, getColoredBadge, usernameColorStyle } from '../util'
 import { Assets } from '../Assets'
 import { Graphics } from '../Graphics'
+import { formatDistance, formatDistanceToNow } from 'date-fns'
 
 const props = defineProps<{
   game: GameInfo,
@@ -105,6 +109,10 @@ const MIN_HEIGHT = 300
 
 const players = computed(() => {
   return props.game.playersWithScore
+})
+
+const usernameStyle = ((color: string | null) => {
+  return usernameColorStyle(color)
 })
 
 const styleContainer = computed(() => {
@@ -164,10 +172,11 @@ const shapeMode = computed(() => {
 })
 
 const time = ((start: number, end: number) => {
-  const from = start
-  const to = end || Time.timestamp()
-  const timeDiffStr = Time.timeDiffStr(from, to)
-  return `${timeDiffStr}`
+  if (!end) {
+    return formatDistanceToNow(start)
+  } else {
+    return formatDistance(start, end)
+  }
 })(props.game.started, props.game.finished)
 
 

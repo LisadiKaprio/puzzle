@@ -4,18 +4,91 @@
     :fluid="true"
     class="index-view"
   >
+    <div class="leaderboard-container">
+      <h1 class="pixel-font">
+        Leaderboard
+      </h1>
+      <span
+        v-if="leaderboardWeek"
+      >
+        <span
+          v-for="(entry, idx) in leaderboardWeek.entries"
+          :key="idx"
+          class="mr-1"
+        >
+          <!-- <icon
+            :style="iconStyle(player)"
+            :title="iconTitle(player)"
+          /> -->
+          {{ entry.user_name }} ({{ entry.pieces_count }} pieces)
+        </span>
+
+      </span>
+    </div>
+    <!-- <v-tabs v-model="leaderboardTab">
+        <v-tab value="week">
+          Weekly
+        </v-tab>
+        <v-tab value="month">
+          Monthly
+        </v-tab>
+        <v-tab value="alltime">
+          Alltime
+        </v-tab>
+      </v-tabs>
+
+      <v-window v-model="leaderboardTab">
+        <v-window-item value="week">
+          <p class="pt-2 pb-2 text-medium-emphasis">
+            Finished puzzles within a week.
+          </p>
+          <Leaderboard
+            v-if="leaderboardWeek"
+            :lb="leaderboardWeek"
+          />
+        </v-window-item>
+        <v-window-item value="month">
+          <p class="pt-2 pb-2 text-medium-emphasis">
+            Finished puzzles within a month.
+          </p>
+          <Leaderboard
+            v-if="leaderboardMonth"
+            :lb="leaderboardMonth"
+          />
+        </v-window-item>
+        <v-window-item value="alltime">
+          <p class="pt-2 pb-2 text-medium-emphasis">
+            All finished puzzles.
+          </p>
+          <Leaderboard
+            v-if="leaderboardAlltime"
+            :lb="leaderboardAlltime"
+          />
+        </v-window-item>
+      </v-window>
+      <div
+        v-if="!me || me.type !== 'user'"
+        class="mt-5 text-disabled"
+      >
+        <v-btn
+          density="comfortable"
+          @click="login"
+        >
+          Login
+        </v-btn> to show up on the leaderboard!
+    </div> 
+    </div> -->
+
     <v-row class="mt-2 mb-2">
       <v-col>
         <div class="text-center">
-          <v-btn
-            class="font-weight-bold mb-1"
+          <RouterLink
+            class="main-action-button pixel-font"
             :to="{ name: 'new-game' }"
-            prepend-icon="mdi-puzzle-outline"
-            size="large"
-            color="info"
           >
+            <icon icon="puzzle-game" />
             Start a new Puzzle
-          </v-btn>
+          </RouterLink>
         </div>
       </v-col>
     </v-row>
@@ -26,7 +99,7 @@
     >
       <MasonryWall
         :items="data.gamesRunning.items"
-        :column-width="420"
+        :column-width="360"
         :gap="10"
       >
         <template #default="{ item, index }">
@@ -54,61 +127,7 @@
       </v-container> -->
     </div>
 
-    <!-- <div class="leaderboard-container">
-        <h1>Leaderboard</h1>
-        <v-tabs v-model="leaderboardTab">
-          <v-tab value="week">
-            Weekly
-          </v-tab>
-          <v-tab value="month">
-            Monthly
-          </v-tab>
-          <v-tab value="alltime">
-            Alltime
-          </v-tab>
-        </v-tabs>
-
-        <v-window v-model="leaderboardTab">
-          <v-window-item value="week">
-            <p class="pt-2 pb-2 text-medium-emphasis">
-              Finished puzzles within a week.
-            </p>
-            <Leaderboard
-              v-if="leaderboardWeek"
-              :lb="leaderboardWeek"
-            />
-          </v-window-item>
-          <v-window-item value="month">
-            <p class="pt-2 pb-2 text-medium-emphasis">
-              Finished puzzles within a month.
-            </p>
-            <Leaderboard
-              v-if="leaderboardMonth"
-              :lb="leaderboardMonth"
-            />
-          </v-window-item>
-          <v-window-item value="alltime">
-            <p class="pt-2 pb-2 text-medium-emphasis">
-              All finished puzzles.
-            </p>
-            <Leaderboard
-              v-if="leaderboardAlltime"
-              :lb="leaderboardAlltime"
-            />
-          </v-window-item>
-        </v-window>
-        <div
-          v-if="!me || me.type !== 'user'"
-          class="mt-5 text-disabled"
-        >
-          <v-btn
-            density="comfortable"
-            @click="login"
-          >
-            Login
-          </v-btn> to show up on the leaderboard!
-        </div> 
-      </div>-->
+    
 
     <h1
       v-if="data.livestreams.length > 0"

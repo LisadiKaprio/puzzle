@@ -19,7 +19,7 @@ import { StyleValue, computed } from 'vue'
 import { BasicPlayerInfo, RegisteredMap } from '../../../common/src/Types'
 import { GamePlay } from '../GamePlay'
 import { GameReplay } from '../GameReplay'
-import { getColoredBadge, getAnonBadge } from '../util'
+import { getColoredBadge, getAnonBadge, usernameColorStyle } from '../util'
 
 const props = defineProps<{
   player: BasicPlayerInfo,
@@ -35,18 +35,11 @@ const points = computed(() => {
   return props.player.points
 })
 
-const style = computed(() => {
-  if (props.player.color === 'ukraine') {
-    return {
-      'backgroundImage': 'linear-gradient(180deg, rgba(0,87,183,1) 0%, rgba(0,87,183,1) 50%, rgba(255,221,0,1) 50%)',
-      '-webkit-background-clip': 'text',
-      '-webkit-text-fill-color': 'transparent',
-    } as StyleValue
-  }
-  return { color: props.player.color } as StyleValue
-})
-
 let badgeMap: Record<string, string> = {}
+
+const style = computed(() => {
+  return usernameColorStyle(props.player.color)
+})
 
 const iconStyle = computed(() => {
   const url = !props.registeredMap[props.player.id]

@@ -1,3 +1,4 @@
+import { StyleValue } from 'vue'
 import { Assets } from './Assets'
 import { Graphics } from './Graphics'
 
@@ -53,3 +54,14 @@ export const getAnonBadge = (graphics: Graphics, assets: Assets, badgeMap: Recor
   }
   return url
 }
+
+export const usernameColorStyle = ((color: string | null) => {
+  if (color === 'ukraine') {
+    return {
+      'backgroundImage': 'linear-gradient(180deg, rgba(0,87,183,1) 0%, rgba(0,87,183,1) 50%, rgba(255,221,0,1) 50%)',
+      '-webkit-background-clip': 'text',
+      '-webkit-text-fill-color': 'transparent',
+    } as StyleValue
+  }
+  return { color } as StyleValue
+})
