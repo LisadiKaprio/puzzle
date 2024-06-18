@@ -24,10 +24,18 @@
             class="mr-4"
             :class="{ index: route.name === 'index' }"
           >
-          <h4 :class="{ index: route.name === 'index' }">
+          <h4 
+            :class="{ index: route.name === 'index' }" 
+            class="pixel-font"
+          >
             {{ route.meta.title }}
           </h4>
           <slot name="title" />
+          <img
+            src="./../assets/gfx/icon.png"
+            class="ml-4"
+            :class="{ index: route.name === 'index' }"
+          >
         </div>
         <div class="justify-end">
           <v-btn
@@ -36,22 +44,7 @@
             href="https://stand-with-ukraine.pp.ua/"
             target="_blank"
           >
-            <icon icon="ukraine-heart" /> <span class="ml-2 mr-2">Stand with Ukraine</span> <icon icon="ukraine-heart" />
-          </v-btn>
-          <v-btn
-            v-if="me && loggedIn"
-            class="user-welcome-message"
-            @click="drawerUser = !drawerUser"
-          >
-            Hello, {{ me.name }}
-          </v-btn>
-          <v-btn
-            v-else
-            size="small"
-            class="ml-1"
-            @click="login"
-          >
-            Login
+            <icon icon="ukraine-heart" />
           </v-btn>
           <v-app-bar-nav-icon
             class="mr-1"

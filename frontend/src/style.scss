@@ -346,12 +346,17 @@ $bg-color-transparent: rgba(0 0 0 / 70%);
 .featured-artist-view,
 .index-view,
 .new-game-view {
-  background: url("assets/textures/wood-dark.jpg");
+  background-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.75), /* Start color at the top */
+    rgba(0, 0, 0, 0) 66%, /* Middle color at 50% */
+    rgba(0, 0, 0, 0) 100% /* End color at the bottom */
+  ), url("assets/textures/wood-dark.jpg");
   height: 100%;
   background-repeat: no-repeat;
   background-attachment: fixed;
   &.v-container{
-    padding: 0px 8vw;
+    padding: 32px 8vw;
   }
 }
 
@@ -722,6 +727,7 @@ kbd {
   flex: 1;
   justify-content: center;
   height: 64px;
+  background-color: #000;
 }
 
 .header-bar-container > div {
@@ -733,6 +739,7 @@ kbd {
   h4 {
     line-height: 1;
     font-size: 24px;
+    letter-spacing: normal;
     user-select: none;
     white-space: nowrap;
   }
@@ -754,8 +761,7 @@ kbd {
     line-height: 1;
     font-size: 48px;
     margin-top: 8px;
-    color: rgba(100 100 100 / 100%);
-    text-shadow: 1px 1px 3px rgba(0 0 0 / 25%), 0 0 0 rgb(49 49 49);
+    text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.25), 2px 2px 0 rgb(48, 46, 172), 2px 2px 10px rgba(48, 46, 172, 0.25); ; 
   }
 
   .user-welcome-message {

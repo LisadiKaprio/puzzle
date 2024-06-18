@@ -77,17 +77,45 @@ export class LeaderboardRepo {
         continue
       }
       const leaderboardUserEntry: LeaderboardEntry | null = userId ? await this.db._get(`
+        with players AS (
+          select distinct on (client_id)
+          jsonb_array_elements(g.data::jsonb->'players')->>0 as client_id,
+          jsonb_array_elements(g.data::jsonb->'players')->>4 as user_name,
+          jsonb_array_elements(g.data::jsonb->'players')->>5 as color,
+          jsonb_array_elements(g.data::jsonb->'players')->>8 as ts
+          from games g
+          order by client_id, ts desc
+          )
         select
-          lbe.*, u.name as user_name
+          lbe.*, 
+          u.name as user_name,
+          p.user_name,
+          p.color,
+          p.ts
         from leaderboard_entries lbe
           inner join users u on u.id = lbe.user_id
+          inner join players p on p.client_id = u.client_id
         where lbe.user_id = $1 and lbe.leaderboard_id = $2
       `, [userId, leaderboard.id]) : null
       const leaderboardEntries: LeaderboardEntry[] = await this.db._getMany(`
+        with players AS (
+          select distinct on (client_id)
+          jsonb_array_elements(g.data::jsonb->'players')->>0 as client_id,
+          jsonb_array_elements(g.data::jsonb->'players')->>4 as user_name,
+          jsonb_array_elements(g.data::jsonb->'players')->>5 as color,
+          jsonb_array_elements(g.data::jsonb->'players')->>8 as ts
+          from games g
+          order by client_id, ts desc
+          )
         select
-          lbe.*, u.name as user_name
+          lbe.*, 
+          u.name as registered_name,
+          p.user_name,
+          p.color,
+          p.ts
         from leaderboard_entries lbe
           inner join users u on u.id = lbe.user_id
+          inner join players p on p.client_id = u.client_id
         where
           lbe.leaderboard_id = $1
           and lbe.pieces_count > 0

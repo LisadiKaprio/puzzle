@@ -10,21 +10,24 @@
       </h1>
       <span
         v-if="leaderboardWeek"
+        class="ml-4 d-flex flex-row justify-center align-center"
       >
         <span
           v-for="(entry, idx) in leaderboardWeek.entries"
           :key="idx"
           class="mr-1"
+          :style="usernameStyle(entry.color)"
         >
-          <!-- <icon
-            :style="iconStyle(player)"
-            :title="iconTitle(player)"
-          /> -->
+          <icon
+            :style="iconStyle(entry)"
+            :title="iconTitle(entry)"
+          />
           {{ entry.user_name }} ({{ entry.pieces_count }} pieces)
         </span>
 
       </span>
     </div>
+
     <!-- <v-tabs v-model="leaderboardTab">
         <v-tab value="week">
           Weekly
@@ -79,19 +82,38 @@
     </div> 
     </div> -->
 
-    <v-row class="mt-2 mb-2">
-      <v-col>
-        <div class="text-center">
-          <RouterLink
-            class="main-action-button pixel-font"
-            :to="{ name: 'new-game' }"
-          >
-            <icon icon="puzzle-game" />
-            Start a new Puzzle
-          </RouterLink>
-        </div>
-      </v-col>
-    </v-row>
+    <div class="my-4 d-flex flex-row align-center justify-space-between"> 
+      <div class="text-center">
+        <a
+          class="main-action-button pixel-font"
+          v-if="me && loggedIn"
+          @click="drawerUser = !drawerUser"
+        >
+          <icon
+            :style="iconStyle(leaderboardWeek.valueOf().userEntry)"
+            :title="iconTitle(leaderboardWeek.valueOf().userEntry)"
+          />
+          Hello, {{ me.name }}
+        </a>
+        <a
+          class="main-action-button pixel-font"
+          v-else
+          size="small"
+          @click="login"
+        >
+          Login
+      </a>
+      </div>
+      <div class="text-center">
+        <RouterLink
+          class="main-action-button pixel-font"
+          :to="{ name: 'new-game' }"
+        >
+          <icon icon="puzzle-game" />
+          Start a new Puzzle
+        </RouterLink>
+      </div>
+    </div>
 
     <div
       v-if="data.gamesRunning.items.length"
@@ -206,7 +228,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ApiDataFinishedGames, ApiDataIndexData, GameInfo, ImageInfo, ImageSearchSort, Tag } from '../../../common/src/Types'
+import { ApiDataFinishedGames, ApiDataIndexData, GameInfo, ImageInfo, ImageSearchSort, LeaderboardEntry, Tag } from '../../../common/src/Types'
+import { IDLE_TIMEOUT_SEC } from '../../../common/src/GameCommon'
+import Time from '../../../common/src/Time'
 import RunningGameTeaser from '../components/RunningGameTeaser.vue'
 import FinishedGameTeaser from '../components/FinishedGameTeaser.vue'
 import Pagination from '../components/Pagination.vue'
@@ -217,10 +241,15 @@ import ImageInfoDialog from '../components/ImageInfoDialog.vue'
 import MasonryWall from '../components/MasonryWall.vue'
 import { Assets } from '../Assets'
 import { Graphics } from '../Graphics'
+import { getAnonBadge, getColoredBadge, usernameColorStyle } from '../util'
 
 const router = useRouter()
 const data = ref<ApiDataIndexData | null>(null)
 const me = ref<User | null>(null)
+
+const loggedIn = computed(() => {
+  return !!(me.value && me.value.type === 'user')
+})
 
 const assets = new Assets()
 const graphics = new Graphics()
@@ -274,6 +303,41 @@ const onPagination = async (q: { limit: number, offset: number }) => {
 const onTagClick = (tag: Tag): void => {
   router.push({ name: 'new-game', query: { sort: ImageSearchSort.DATE_DESC, search: tag.title } })
 }
+
+function isPlayerActive(ts: number): boolean {
+  const minTs = Time.timestamp() - IDLE_TIMEOUT_SEC * Time.SEC
+  return ts >= minTs
+}
+
+let badgeMap: Record<string, string> = {}
+
+const iconStyle = ((entry: LeaderboardEntry) => {
+  if (!entry) {
+    throw new Error('Invalid leaderboard entry')
+  }
+  const active = isPlayerActive(entry.ts)
+  const url = !entry.user_id
+    ? getAnonBadge(graphics, assets, badgeMap, active)
+    : getColoredBadge(graphics, assets, badgeMap, active, entry.color)
+  return {
+    backgroundImage: `url(${url})`,
+  }
+})
+
+const iconTitle = ((entry: LeaderboardEntry) => {
+  if (!entry) {
+    throw new Error('Invalid leaderboard entry')
+  }
+  const active = isPlayerActive(entry.ts)
+  if (!entry.user_id) {
+    return active + ', anonymous user'
+  }
+  return active + ', registered user ♥'
+})
+
+const usernameStyle = ((color: string | null) => {
+  return usernameColorStyle(color)
+})
 
 onMounted(async () => {
   await assets.init(graphics)

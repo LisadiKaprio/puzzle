@@ -503,9 +503,12 @@ export interface LeaderboardEntry {
   leaderboard_id: number
   rank: number
   user_id: number
-  user_name: string
   games_count: number
   pieces_count: number
+  registered_name: string
+  user_name: string
+  color: string
+  ts: number
 }
 
 export interface Livestream {
