@@ -10,27 +10,21 @@ in jigsawpuzzles.io
     :fluid="true"
     class="new-game-view p-0"
   >
-    <v-row class="mt-2 mb-2">
-      <v-col>
-        <div
-          :class="{blurred: dialog}"
-          class="text-center"
-        >
-          <v-btn
-            class="font-weight-bold mb-1"
-            prepend-icon="mdi-image-plus-outline"
-            size="large"
-            color="info"
-            @click="openDialog('new-image')"
-          >
-            Upload your image
-          </v-btn>
-          <div class="text-disabled">
-            (The image you upload will be added to the public gallery.)
-          </div>
-        </div>
-      </v-col>
-    </v-row>
+    <div
+      :class="{blurred: dialog}"
+      class="text-center"
+    >
+      <a
+        class="action-button main-action mb-1"
+        @click="openDialog('new-image')"
+      >
+      <icon icon="preview"/>
+        Upload your image
+      </a>
+      <div class="text-disabled">
+        (The image you upload will be added to the public gallery.)
+      </div>
+    </div>
     <v-container
       :fluid="true"
       :class="{blurred: dialog }"
@@ -74,7 +68,7 @@ in jigsawpuzzles.io
       <div>
         <v-select
           v-model="filters.sort"
-          class="sorting"
+          class="custom-select sorting"
           density="compact"
           label="Sorting:"
           item-title="title"
@@ -91,6 +85,7 @@ in jigsawpuzzles.io
       </div>
       <div>
         <v-text-field
+          class="custom-select"
           v-model="filters.search"
           density="compact"
           label="Type in keywords..."

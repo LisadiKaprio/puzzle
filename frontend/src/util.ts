@@ -1,6 +1,8 @@
 import { StyleValue } from 'vue'
 import { Assets } from './Assets'
 import { Graphics } from './Graphics'
+import { IDLE_TIMEOUT_SEC } from '../../common/src/GameCommon'
+import Time from '../../common/src/Time'
 
 export function debounce<F extends (...args: any[]) => any>(func: F, wait: number): F {
   let timeoutID: number
@@ -65,3 +67,8 @@ export const usernameColorStyle = ((color: string | null) => {
   }
   return { color } as StyleValue
 })
+
+export function isPlayerActive(ts: number): boolean {
+  const minTs = Time.timestamp() - IDLE_TIMEOUT_SEC * Time.SEC
+  return ts >= minTs
+}

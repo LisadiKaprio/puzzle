@@ -492,6 +492,12 @@ export interface ApiGamesData {
   pagination: Pagination
 }
 
+export enum LeaderboardType {
+  WEEK = 'week',
+  MONTH = 'month',
+  ALLTIME = 'alltime'
+}
+
 export interface Leaderboard {
   id: number
   name: string

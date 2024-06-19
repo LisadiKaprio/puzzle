@@ -97,7 +97,8 @@ import { formatDistance, formatDistanceToNow } from 'date-fns'
 const props = defineProps<{
   game: GameInfo,
   graphics: Graphics,
-  assets: Assets
+  assets: Assets,
+  masonry: boolean
 }>()
 
 const emit = defineEmits<{
@@ -116,29 +117,41 @@ const usernameStyle = ((color: string | null) => {
 })
 
 const styleContainer = computed(() => {
-  return {
-    paddingTop: (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%',
+  if (props.masonry.valueOf() === true) {
+    return {
+      paddingTop: (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%',
+      }
+  } else {
+    return {
+      height: '320px',
     }
+  }
 })
 
 const styleIdle = computed(() => {
   const url = props.game.imageSnapshots.current
     ? props.game.imageSnapshots.current.url
     : props.game.image.url
+  const paddingTopValue = props.masonry.valueOf() === true
+    ? (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%'
+    : `0px`
   return { 
-    paddingTop: (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%',
+    paddingTop: paddingTopValue,
     backgroundImage: `url("${resizeUrl(url, 620, 496, 'contain')}")`,
     backgroundSize: 'cover',
     backgroundPosition: '50% 50%',
   }
 })
+
 const styleHovered = computed(() => {
   // when there is a snapshot, we show the full image on hover! this is
   // not a mistake here
   const url = props.game.imageSnapshots.current ? props.game.image.url : null
+  const paddingTopValue = props.masonry.valueOf() === true
+    ? (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%'
+    : `0px`
   return url ? { 
-    paddingTop: (Math.max(MIN_HEIGHT, props.game.image.height) / props.game.image.width * 100) + '%',
-    
+    paddingTop: paddingTopValue,
     backgroundImage: `url("${resizeUrl(url, 620, 496, 'contain')}")`,
     backgroundSize: 'cover',
     backgroundPosition: '50% 50%',
@@ -187,7 +200,7 @@ const iconStyle = ((player: BasicPlayerInfo) => {
     throw new Error('Invalid player object')
   }
   console.log(props.game.activePlayers)
-  const active = props.game.activePlayers.includes(player)
+  const active = props.game.activePlayers.map(p => p.id).includes(player.id)
   console.log(player)
   const url = !player.id
     ? getAnonBadge(props.graphics, props.assets, badgeMap, active)
@@ -201,7 +214,7 @@ const iconTitle = ((player: BasicPlayerInfo) => {
   if (!player) {
     throw new Error('Invalid player object')
   }
-  const active = (props.game.activePlayers.includes(player) ? 'Active' : 'Idle')
+  const active = (props.game.activePlayers.map(p => p.id).includes(player.id) ? 'Active' : 'Idle')
   if (!player.id) {
     return active + ', anonymous user'
   }
