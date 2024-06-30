@@ -281,39 +281,39 @@ export const clamp = (val: number, min: number, max: number): number => {
 
 export const snapModeToString = (m: SnapMode) => {
   switch (m) {
-    case SnapMode.REAL: return 'Real'
+    case SnapMode.REAL: return 'Realistic snapping'
     case SnapMode.NORMAL:
-    default: return 'Normal'
+    default: return 'Simplified snapping'
   }
 }
 export const snapModeDescriptionToString = (m: SnapMode) => {
   switch (m) {
-    case SnapMode.REAL: return 'Pieces snap only to corners, already snapped pieces and to each other'
+    case SnapMode.REAL: return 'Pieces lock into place only if one of the neighboring pieces is also locked in its final spot. Start by locking in the corner pieces.'
     case SnapMode.NORMAL:
-    default: return 'Pieces snap to final destination and to each other'
+    default: return 'Every piece locks into place as soon as it is placed in its final spot, regardless of whether it connects to other pieces or not.'
   }
 }
 
 export const scoreModeToString = (m: ScoreMode) => {
   switch (m) {
-    case ScoreMode.ANY: return 'Any'
+    case ScoreMode.ANY: return 'Score when connected'
     case ScoreMode.FINAL:
-    default: return 'Final'
+    default: return 'Score when placed down'
   }
 }
 
 export const scoreModeDescriptionToString = (m: ScoreMode) => {
   switch (m) {
-    case ScoreMode.ANY: return 'Score when pieces are connected to each other or on final location'
+    case ScoreMode.ANY: return 'Score goes up when pieces are connected to each other or locked to their final location.'
     case ScoreMode.FINAL:
-    default: return 'Score when pieces are put to their final location'
+    default: return 'Score goes up only when pieces are locked to their final location.'
   }
 }
 
 export const shapeModeToString = (m: ShapeMode) => {
   switch (m) {
     case ShapeMode.FLAT: return 'Flat'
-    case ShapeMode.ANY: return 'Any'
+    case ShapeMode.ANY: return 'Flat anywhere'
     case ShapeMode.NORMAL:
     default: return 'Normal'
   }
@@ -321,10 +321,10 @@ export const shapeModeToString = (m: ShapeMode) => {
 
 export const shapeModeDescriptionToString = (m: ShapeMode) => {
   switch (m) {
-    case ShapeMode.FLAT: return 'All pieces flat on all sides'
-    case ShapeMode.ANY: return 'Flat pieces can occur anywhere'
+    case ShapeMode.FLAT: return 'All edges are flat.'
+    case ShapeMode.ANY: return 'Flat edges can occur anywhere inside the puzzle.'
     case ShapeMode.NORMAL:
-    default: return 'Normal pieces, flat only on the outside'
+    default: return 'Flat edges only occur on the outside of the puzzle.'
   }
 }
 

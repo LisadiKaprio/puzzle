@@ -51,14 +51,10 @@
         <h5>Click to setup a game</h5>
       </div>
       <div class="imageteaser-actions">
-        <v-btn
-          v-if="canEdit"
-          variant="text"
-          icon="mdi-pencil"
-          size="x-small"
-          class="imageteaser-edit"
-          @click.stop="onEditClick"
-        />
+        <div 
+        class="imageteaser-edit">
+        <icon icon="edit"
+          @click.stop="onEditClick"></icon></div>
       </div>
     </div>
   </v-card>

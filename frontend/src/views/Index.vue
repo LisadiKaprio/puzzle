@@ -1,4 +1,36 @@
 <template>
+  <v-dialog 
+    class="custom-dialog"
+    width="560" 
+    v-model="fullLeaderboardDialog"
+  >
+  <v-card>
+    <h1 class="pixel-font negative-margin">
+      Leaderboard
+    </h1>
+    <v-select
+      v-model="currentLeaderboardType"
+      class="custom-select"
+      :items="leaderboards"
+    />
+      <Leaderboard
+        v-if="currentLeaderboard"
+        :lb="currentLeaderboard"
+      />
+    <div
+      v-if="!me || me.type !== 'user'"
+      class="mt-5 text-disabled"
+    >
+      <v-btn
+        density="comfortable"
+        @click="login"
+      >
+        Login
+      </v-btn> to show up on the leaderboard!
+      </div> 
+    </v-card>
+  </v-dialog>
+
   <v-container
     v-if="data"
     :fluid="true"
@@ -15,6 +47,7 @@
           :items="leaderboards" 
           density="compact"
         />
+        <div class="opener" @click="fullLeaderboardDialog = true">Show full Top 10</div>
       </div>
       <span
         v-if="currentLeaderboard"
@@ -26,7 +59,7 @@
           class="player-entry"
           :style="usernameStyle(entry.color)"
         >
-          <span class="player-icon-container position-relative">
+          <span class="player-icon-container">
             <icon
               class="crown"
               :style="crownStyle(entry)"
@@ -36,85 +69,60 @@
               :title="iconTitle(entry)"
             />
           </span>
-          {{ entry.user_name }} ({{ entry.pieces_count }} pieces)
+          {{ entry.registered_name }} ({{ entry.pieces_count }} pieces)
         </span>
 
       </span>
     </div>
 
-    <!-- <v-tabs v-model="leaderboardTab">
-        <v-tab value="week">
-          Weekly
-        </v-tab>
-        <v-tab value="month">
-          Monthly
-        </v-tab>
-        <v-tab value="alltime">
-          Alltime
-        </v-tab>
-      </v-tabs>
-
-      <v-window v-model="leaderboardTab">
-        <v-window-item value="week">
-          <p class="pt-2 pb-2 text-medium-emphasis">
-            Finished puzzles within a week.
-          </p>
-          <Leaderboard
-            v-if="leaderboardWeek"
-            :lb="leaderboardWeek"
-          />
-        </v-window-item>
-        <v-window-item value="month">
-          <p class="pt-2 pb-2 text-medium-emphasis">
-            Finished puzzles within a month.
-          </p>
-          <Leaderboard
-            v-if="leaderboardMonth"
-            :lb="leaderboardMonth"
-          />
-        </v-window-item>
-        <v-window-item value="alltime">
-          <p class="pt-2 pb-2 text-medium-emphasis">
-            All finished puzzles.
-          </p>
-          <Leaderboard
-            v-if="leaderboardAlltime"
-            :lb="leaderboardAlltime"
-          />
-        </v-window-item>
-      </v-window>
-      <div
-        v-if="!me || me.type !== 'user'"
-        class="mt-5 text-disabled"
-      >
-        <v-btn
-          density="comfortable"
-          @click="login"
-        >
-          Login
-        </v-btn> to show up on the leaderboard!
-    </div> 
-    </div> -->
 
     <div class="homepage-action-buttons "> 
       <div class="text-center">
-        <a
-          v-if="me && loggedIn"
-          class="action-button secondary-action"
-        >
-          <icon
-            :style="iconStyle(currentLeaderboard.valueOf().userEntry)"
-            :title="iconTitle(currentLeaderboard.valueOf().userEntry)"
-          />
-          <div class="info-container">
-            <span class="main-info">
-              Hello, {{ me.name }}!
-            </span>
-            <span class="secondary-info">
-              You rank place {{ currentLeaderboard.valueOf().userEntry.rank }} on the leaderboard!
-            </span>
-          </div>
-        </a>
+        <v-menu v-if="me && loggedIn">
+          <template v-slot:activator="{ props }">
+            <a v-bind="props"
+              class="action-button secondary-action"
+            >
+              <span
+                v-if="currentLeaderboard.valueOf() && currentLeaderboard.valueOf().userEntry" 
+                class="player-icon-container"
+                >
+                <icon
+                  class="crown"
+                  :style="crownStyle(currentLeaderboard.valueOf().userEntry)"
+                />
+                  <icon 
+                    :style="iconStyle(currentLeaderboard.valueOf().userEntry)"
+                    :title="iconTitle(currentLeaderboard.valueOf().userEntry)"
+                  />
+              </span>
+              <div class="info-container">
+                <span class="main-info">
+                  Hello, {{ me.name }}!
+                </span>
+                <span 
+                  v-if="currentLeaderboard.valueOf() && currentLeaderboard.valueOf().userEntry"
+                  class="secondary-info"
+                >
+                  You rank place {{ currentLeaderboard.valueOf().userEntry.rank }} on {{ currentLeaderboardToAdjective }} leaderboard!
+                </span>
+                <span 
+                  v-else
+                  class="secondary-info"
+                >
+                  Finish a public game to show up in leaderboards!
+                </span>
+              </div>
+            </a>
+          </template>
+          <v-list>
+            <v-list-item
+              @click="logout()"
+            >
+              <v-list-item-title>Logout</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <a
           v-else
           class="action-button secondary-action"
@@ -182,9 +190,6 @@
         />
       </v-container>
     </div>
-
-    
-
     <h1
       v-if="data.livestreams.length > 0"
       class="mt-5"
@@ -239,6 +244,8 @@
       <FinishedGameTeaser
         v-for="(g, idx) in data.gamesFinished.items"
         :key="idx"
+        :assets="assets"
+        :graphics="graphics"
         :game="g"
         @go-to-game="goToGame"
         @go-to-replay="goToReplay"
@@ -298,6 +305,9 @@ const onInit = async () => {
 const login = () => {
   user.eventBus.emit('triggerLoginDialog')
 }
+async function logout() {
+  await user.logout()
+}
 
 const goToGame = ((game: GameInfo) => {
   router.push({ name: 'game', params: { id: game.id } })
@@ -324,9 +334,21 @@ const currentGamesView = ref<string>(GamesViewSetting.STANDARD)
 const leaderboards = Object.values(LeaderboardType)
 const currentLeaderboardType = ref<LeaderboardType>(LeaderboardType.WEEK)
 
+const currentLeaderboardToAdjective = computed(() => {
+  if (currentLeaderboardType.value === LeaderboardType.WEEK) {
+    return `this week's`
+  } else if (currentLeaderboardType.value === LeaderboardType.MONTH) {
+    return `this month's`
+  } else {
+    return 'the all time'
+  }
+})
+
 const currentLeaderboard = computed(() => {
   return data.value?.leaderboards.find(lb => lb.name === currentLeaderboardType.value)
 })
+
+const fullLeaderboardDialog = ref<boolean>(false)
 
 const onPagination = async (q: { limit: number, offset: number }) => {
   if (!data.value) {
@@ -350,8 +372,9 @@ enum CrownType {
 }
 
 const crownStyle = ((entry: LeaderboardEntry) => {
+  console.log(entry)
   if (!entry) {
-    throw new Error('Invalid leaderboard entry')
+    return ``
   }
   let crownType = ''
   if (entry.rank === 1) {
@@ -370,7 +393,7 @@ const crownStyle = ((entry: LeaderboardEntry) => {
 
 const iconStyle = ((entry: LeaderboardEntry) => {
   if (!entry) {
-    throw new Error('Invalid leaderboard entry')
+    return ``
   }
   const active = isPlayerActive(entry.ts)
   const url = !entry.user_id
@@ -383,7 +406,7 @@ const iconStyle = ((entry: LeaderboardEntry) => {
 
 const iconTitle = ((entry: LeaderboardEntry) => {
   if (!entry) {
-    throw new Error('Invalid leaderboard entry')
+    return ``
   }
   const active = isPlayerActive(entry.ts)
   if (!entry.user_id) {

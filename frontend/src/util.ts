@@ -72,3 +72,11 @@ export function isPlayerActive(ts: number): boolean {
   const minTs = Time.timestamp() - IDLE_TIMEOUT_SEC * Time.SEC
   return ts >= minTs
 }
+
+export const zeroPad = (num: number, places: number): string => {
+  // if no num, return as many 0 in a string as there are places given
+  if (!num) {
+    return '0'.repeat(places);
+  }
+  return String(num).padStart(places, '0')
+}

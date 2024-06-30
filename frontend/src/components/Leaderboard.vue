@@ -35,7 +35,7 @@
           />
           <span v-else>{{ row.rank }}</span>
         </td>
-        <td>{{ row.user_name }}</td>
+        <td>{{ row.registered_name }}</td>
         <td>{{ row.pieces_count }}</td>
         <td>{{ row.games_count }}</td>
       </tr>
@@ -46,7 +46,7 @@
         <td class="text-center">
           {{ lb.userEntry.rank || '-' }}
         </td>
-        <td>{{ lb.userEntry.user_name }}</td>
+        <td>{{ lb.userEntry.registered_name }}</td>
         <td>{{ lb.userEntry.pieces_count }}</td>
         <td>{{ lb.userEntry.games_count }}</td>
       </tr>
