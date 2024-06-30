@@ -251,12 +251,26 @@
         @go-to-replay="goToReplay"
         @show-image-info="showImageInfo"
       />
-    </v-container>
-    <Pagination
-      :pagination="data.gamesFinished.pagination"
-      @click="onPagination"
-    />
+      <v-container
+        :fluid="true"
+        class="pl-0 pr-0 game-teasers-holder finished-games"
+      >
+        <FinishedGameTeaser
+          v-for="(g, idx) in data.gamesFinished.items"
+          :key="idx"
+          :game="g"
+          @go-to-game="goToGame"
+          @go-to-replay="goToReplay"
+          @show-image-info="showImageInfo"
+        />
+      </v-container>
+      <Pagination
+        :pagination="data.gamesFinished.pagination"
+        @click="onPagination"
+      />
+    </template>
   </v-container>
+
   <v-dialog v-model="dialog">
     <ImageInfoDialog
       v-if="imageInfo"
